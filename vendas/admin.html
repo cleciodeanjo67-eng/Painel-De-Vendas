@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Multi-Empresa - Gestão Profissional</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+    body { background-color: var(--bg); color: var(--text); padding: 20px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    
+    #telaLogin {
+      max-width: 400px; margin: 60px auto; background: var(--card-bg); padding: 30px;
+      border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border);
+      text-align: center;
+    }
+    #telaLogin h2 { color: #60a5fa; margin-bottom: 20px; font-size: 22px; }
+    .auth-group { margin-bottom: 15px; text-align: left; }
+    .auth-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--text-muted); }
+    .auth-group input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: white; font-size: 14px; outline: none; }
+    .auth-group input:focus { border-color: var(--primary); }
+    
+    .btn-auth { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 5px; }
+    .btn-auth:hover { background: var(--primary-hover); }
+    .link-esqueci { display: block; margin-top: 15px; font-size: 13px; color: #60a5fa; cursor: pointer; text-decoration: underline; }
+
+    #painelAdmin { display: none; }
+
+    header {
+      background: var(--card-bg); padding: 20px; border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 20px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+      border: 1px solid var(--border);
+    }
+    header h1 { font-size: 20px; color: #60a5fa; display: flex; align-items: center; gap: 8px; }
+    
+    .acoes-topo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .btn-link { background: #334155; color: #60a5fa; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600; border: 1px solid var(--border); }
+    .btn-engrenagem, .btn-novo-item { background: #334155; color: #cbd5e1; border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-engrenagem:hover, .btn-novo-item:hover { background: #475569; color: white; }
+    .btn-novo-item { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn-novo-item:hover { background: var(--primary-hover); }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8);
+      display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
+    }
+    .modal-content {
+      background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 12px;
+      border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .modal-header h3 { color: #60a5fa; font-size: 18px; }
+    .btn-fechar-modal { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+
+    .link-compartilhar {
+      margin-top: 15px; padding: 12px; background: #0f172a; border-radius: 6px;
+      border: 1px dashed #60a5fa; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .link-compartilhar span { font-size: 12px; color: #cbd5e1; word-break: break-all; }
+    .btn-copy { background: #16a34a; width: auto; padding: 6px 12px; font-size: 12px; border: none; color: white; border-radius: 4px; cursor: pointer; }
+
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 1px solid var(--border); }
+    .card h3 { font-size: 16px; margin-bottom: 15px; color: #60a5fa; }
+    
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+    input, textarea { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; color: var(--text); outline: none; }
+    input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+    textarea { resize: vertical; height: 70px; }
+    
+    button { width: 100%; padding: 11px; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; color: white; }
+    .btn-primary { background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-danger { background: var(--danger); padding: 6px 10px; font-size: 12px; }
+    .btn-edit { background: #0284c7; padding: 6px 10px; font-size: 12px; }
+
+    .lista-produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 15px;
+    }
+    .produto-item {
+      background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+    }
+    .produto-topo { display: flex; align-items: center; gap: 10px; }
+    .produto-topo img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; background: #334155; }
+    .produto-info h4 { font-size: 14px; color: var(--text); margin-bottom: 2px; }
+    .produto-info p { font-size: 13px; color: #60a5fa; font-weight: 600; }
+    .acoes { display: flex; gap: 6px; width: 100%; }
+    .acoes button { flex: 1; }
+    
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #334155; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; display: none; z-index: 3000; border: 1px solid var(--border); }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <!-- TELA DE LOGIN / CADASTRO COM GMAIL OBRIGATÓRIO -->
+  <div id="telaLogin">
+    <h2>🔐 Acesso ao Painel</h2>
+    <div class="auth-group">
+      <label>Seu E-mail (Gmail) *</label>
+      <input type="email" id="loginEmail" placeholder="seuemail@gmail.com">
+    </div>
+    <div class="auth-group">
+      <label>Senha de Acesso *</label>
+      <input type="password" id="loginSenha" placeholder="Sua senha secreta">
+    </div>
+    <div class="auth-group">
+      <label>WhatsApp (com DDD) *</label>
+      <input type="text" id="loginWhatsapp" placeholder="Ex: 5564999999999">
+    </div>
+    <button class="btn-auth" onclick="fazerLoginOuCadastro()">Entrar / Criar Conta</button>
+    <span class="link-esqueci" onclick="esqueciSenhaEmail()">Esqueci minha senha (Enviar link por E-mail)</span>
+  </div>
+
+  <!-- PAINEL PRINCIPAL -->
+  <div class="container" id="painelAdmin">
+    <header>
+      <h1>⚙️ <span id="tituloLojaAtual" style="color: white;">Empresa</span></h1>
+      <div class="acoes-topo">
+        <a href="#" id="btnVerLoja" target="_blank" class="btn-link" style="display: none;">👁️ Ver Catálogo</a>
+        <button class="btn-novo-item" onclick="abrirModalProduto()">+ Novo Produto ou Serviço</button>
+        <button class="btn-engrenagem" onclick="abrirConfiguracoes()" title="Configurações da Empresa">⚙️ Configurações</button>
+        <button class="btn-link" onclick="sairPainel()" style="background: #dc2626; color: white; border: none; cursor: pointer;">Sair</button>
+      </div>
+    </header>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div class="modal-overlay" id="modalConfig">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>🏢 Dados da Empresa & Configurações</h3>
+          <button class="btn-fechar-modal" onclick="fecharConfiguracoes()">&times;</button>
+        </div>
+
+        <div class="form-group"><label>Nome da Empresa</label><input type="text" id="nomeEmpresaInput" placeholder="Ex: Oficina do Clécio"></div>
+        <div class="form-group"><label>Cidade</label><input type="text" id="cidadeInput" placeholder="Ex: Vicentinópolis"></div>
+        <div class="form-group"><label>Rua / Logradouro</label><input type="text" id="ruaInput" placeholder="Ex: Rua Principal"></div>
+        <div class="form-group"><label>Estado (UF)</label><input type="text" id="estadoInput" placeholder="Ex: GO"></div>
+        <div class="form-group"><label>E-mail Cadastrado</label><input type="text" id="emailInputPerfil" disabled style="opacity: 0.7; cursor: not-allowed;"></div>
+        <div class="form-group"><label>WhatsApp - <b>ID Principal</b></label><input type="text" id="whatsappInput" disabled style="opacity: 0.7; cursor: not-allowed;"></div>
+        
+        <button class="btn-primary" onclick="salvarConfiguracoes()" style="margin-top: 10px;">Salvar Alterações</button>
+
+        <div class="link-compartilhar" id="blocoLinkCliente" style="margin-top: 20px; opacity: 0.5;">
+          <span><strong>Link Exclusivo para seus Clientes:</strong> <br><span id="urlClienteTexto">Salve os dados para gerar o link</span></span>
+          <button class="btn-copy" id="btnCopiarLink" onclick="copiarLinkCliente()" disabled style="background: #64748b; cursor: not-allowed;">📋 Copiar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO DE PRODUTO -->
+    <div class="modal-overlay" id="modalProduto">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="formTitle">➕ Novo Produto ou Serviço</h3>
+          <button class="btn-fechar-modal" onclick="fecharModalProduto()">&times;</button>
+        </div>
+        
+        <input type="hidden" id="prodId">
+        <input type="hidden" id="fotoBase64">
+        
+        <div class="form-group"><label>Nome do Item</label><input type="text" id="nomeInput" placeholder="Ex: Manutenção ou Gás P13"></div>
+        <div class="form-group"><label>Preço (R$)</label><input type="number" step="0.01" id="precoInput" placeholder="0.00"></div>
+        <div class="form-group"><label>Descrição Curta</label><textarea id="descInput" placeholder="Detalhes do produto ou serviço..."></textarea></div>
+        <div class="form-group"><label>Foto do Produto</label><input type="file" id="inputArquivoFoto" accept="image/*" onchange="converterImagemParaBase64(event)" style="padding: 6px;"></div>
+        
+        <button class="btn-primary" id="btnSalvar" onclick="salvarProduto()" style="margin-top: 10px;">Cadastrar Produto</button>
+      </div>
+    </div>
+
+    <!-- TELA PRINCIPAL -->
+    <div class="grid-admin">
+      <div class="card">
+        <h3>📦 Catálogo Online Sincronizado</h3>
+        <div class="lista-produtos" id="listaProdutos">
+          <p style="color: var(--text-muted); text-align: center; grid-column: 1 / -1; padding: 20px;">Carregando...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toastMsg">Ação realizada!</div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyByAZJBRCGJ4s6-9HAjf3qgLVOdj_d2Ha4",
+      authDomain: "meu-pedido-delivery-7cd35.firebaseapp.com",
+      databaseURL: "https://meu-pedido-delivery-7cd35-default-rtdb.firebaseio.com",
+      projectId: "meu-pedido-delivery-7cd35",
+      storageBucket: "meu-pedido-delivery-7cd35.firebasestorage.app",
+      messagingSenderId: "328039639416",
+      appId: "1:328039639416:web:510f5d624c09c91857808d",
+      measurementId: "G-47D5F61DQZ"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let lojaId = localStorage.getItem('sessaoLojaAdmin');
+    let unsubLoja = null;
+    let unsubProdutos = null;
+
+    function mostrarToast(mensagem) {
+      const t = document.getElementById('toastMsg');
+      t.innerText = mensagem;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    function abrirConfiguracoes() { document.getElementById('modalConfig').style.display = 'flex'; }
+    function fecharConfiguracoes() { document.getElementById('modalConfig').style.display = 'none'; }
+    function abrirModalProduto() { limparFormulario(); document.getElementById('modalProduto').style.display = 'flex'; }
+    function fecharModalProduto() { document.getElementById('modalProduto').style.display = 'none'; }
+
+    // LOGIN OU CADASTRO SEGURO COM FIREBASE AUTH
+    async function fazerLoginOuCadastro() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const senha = document.getElementById('loginSenha').value.trim();
+      const whatsapp = document.getElementById('loginWhatsapp').value.replace(/\D/g, '');
+
+      if (!email || !senha || !whatsapp) {
+        alert('Preencha o E-mail, a Senha e o WhatsApp!');
+        return;
+      }
+
+      try {
+        // Tenta fazer login
+        await auth.signInWithEmailAndPassword(email, senha);
+        iniciarPainel(whatsapp);
+      } catch (erroLogin) {
+        // Se a conta não existir, cria automaticamente
+        try {
+          await auth.createUserWithEmailAndPassword(email, senha);
+          await db.collection('lojas').doc(whatsapp).set({
+            email: email,
+            whatsapp: whatsapp,
+            nomeEmpresa: 'Minha Empresa',
+            cidade: '', rua: '', estado: '',
+            criadoEm: new Date()
+          });
+          iniciarPainel(whatsapp);
+          abrirConfiguracoes();
+          mostrarToast('🚀 Conta criada com sucesso! Preencha os dados da empresa ⚙️.');
+        } catch (erroCadastro) {
+          alert('Erro ao entrar/cadastrar: ' + erroCadastro.message);
+        }
+      }
+    }
+
+    // RECUPERAÇÃO DE SENHA DIRETO PARA O GMAIL
+    async function esqueciSenhaEmail() {
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!email) {
+        alert('Digite o seu e-mail no campo acima antes de pedir a recuperação!');
+        return;
+      }
+
+      try {
+        await auth.sendPasswordResetEmail(email);
+        alert('📧 Link de redefinição de senha enviado com sucesso para o seu e-mail (Gmail)! Verifique sua caixa de entrada ou spam.');
+      } catch (err) {
+        alert('Erro ao enviar e-mail: ' + err.message);
+      }
+    }
+
+    function iniciarPainel(codigo) {
+      lojaId = codigo;
+      localStorage.setItem('sessaoLojaAdmin', lojaId);
+      document.getElementById('telaLogin').style.display = 'none';
+      document.getElementById('painelAdmin').style.display = 'block';
+      document.getElementById('whatsappInput').value = lojaId;
+      carregarDadosLoja(lojaId);
+    }
+
+    function sairPainel() {
+      auth.signOut();
+      localStorage.removeItem('sessaoLojaAdmin');
+      window.location.reload();
+    }
+
+    function carregarDadosLoja(codigo) {
+      if (unsubLoja) unsubLoja();
+      if (unsubProdutos) unsubProdutos();
+
+      unsubLoja = db.collection('lojas').doc(codigo).onSnapshot(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById('nomeEmpresaInput').value = data.nomeEmpresa || '';
+          document.getElementById('cidadeInput').value = data.cidade || '';
+          document.getElementById('ruaInput').value = data.rua || '';
+          document.getElementById('estadoInput').value = data.estado || '';
+          document.getElementById('emailInputPerfil').value = data.email || '';
+          document.getElementById('tituloLojaAtual').innerText = data.nomeEmpresa || 'Minha Empresa';
+          if (data.nomeEmpresa && data.nomeEmpresa !== 'Minha Empresa') liberarLinkCliente(codigo);
+        }
+      });
+
+      unsubProdutos = db.collection('lojas').doc(codigo).collection('produtos').onSnapshot(snapshot => {
+        let html = '';
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          const nomeEscapado = (p.nome || '').replace(/'/g, "\\'");
+          const descEscapada = (p.descricao || '').replace(/'/g, "\\'");
+          html += `
+            <div class="produto-item">
+              <div class="produto-topo">
+                <img src="${p.fotoUrl || 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500'}" alt="Foto" onerror="this.src='https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500'">
+                <div class="produto-info">
+                  <h4>${p.nome}</h4>
+                  <p>R$ ${p.preco.toFixed(2)}</p>
+                </div>
+              </div>
+              <div class="acoes">
+                <button class="btn-edit" onclick="editarProduto('${doc.id}', '${nomeEscapado}', ${p.preco}, '${descEscapada}', '${p.fotoUrl || ''}')">Editar</button>
+                <button class="btn-danger" onclick="excluirProduto('${doc.id}')">Excluir</button>
+              </div>
+            </div>
+          `;
+        });
+        document.getElementById('listaProdutos').innerHTML = html || '<p style="color: var(--text-muted); text-align: center; grid-column: 1 / -1; padding: 20px;">Nenhum produto cadastrado.</p>';
+      });
+    }
+
+    function liberarLinkCliente(codigo) {
+      const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+      const linkCliente = `${baseUrl}/index.html?loja=${codigo}`;
+      document.getElementById('urlClienteTexto').innerText = linkCliente;
+      const btnVer = document.getElementById('btnVerLoja');
+      btnVer.href = linkCliente;
+      btnVer.style.display = 'inline-block';
+      const bloco = document.getElementById('blocoLinkCliente');
+      bloco.style.opacity = '1';
+      const btnC = document.getElementById('btnCopiarLink');
+      btnC.disabled = false; btnC.style.background = '#16a34a'; btnC.style.cursor = 'pointer';
+    }
+
+    function converterImagemParaBase64(event) {
+      const arquivo = event.target.files[0];
+      if (!arquivo) return;
+      const reader = new FileReader();
+      reader.onload = function(e) { document.getElementById('fotoBase64').value = e.target.result; };
+      reader.readAsDataURL(arquivo);
+    }
+
+    function salvarConfiguracoes() {
+      const nomeEmpresa = document.getElementById('nomeEmpresaInput').value.trim();
+      const cidade = document.getElementById('cidadeInput').value.trim();
+      const rua = document.getElementById('ruaInput').value.trim();
+      const estado = document.getElementById('estadoInput').value.trim();
+      if (!nomeEmpresa) { alert('Informe o nome da empresa!'); return; }
+
+      let dadosAtualizacao = { nomeEmpresa, cidade, rua, estado, atualizadoEm: new Date() };
+
+      db.collection('lojas').doc(lojaId).set(dadosAtualizacao, { merge: true })
+        .then(() => {
+          liberarLinkCliente(lojaId);
+          fecharConfiguracoes();
+          mostrarToast('✅ Configurações salvas com sucesso!');
+        });
+    }
+
+    function salvarProduto() {
+      const id = document.getElementById('prodId').value;
+      const nome = document.getElementById('nomeInput').value;
+      const preco = parseFloat(document.getElementById('precoInput').value) || 0;
+      const descricao = document.getElementById('descInput').value;
+      let fotoUrl = document.getElementById('fotoBase64').value;
+      if (!nome || !preco) { alert('Preencha o Nome e o Preço!'); return; }
+      if (!id && !fotoUrl) fotoUrl = 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500';
+
+      const dados = { nome, preco, descricao, atualizadoEm: new Date() };
+      if (fotoUrl) dados.fotoUrl = fotoUrl;
+
+      if (id) {
+        db.collection('lojas').doc(lojaId).collection('produtos').doc(id).update(dados)
+          .then(() => { fecharModalProduto(); limparFormulario(); mostrarToast('✏️ Produto atualizado!'); });
+      } else {
+        dados.criadoEm = new Date();
+        db.collection('lojas').doc(lojaId).collection('produtos').add(dados)
+          .then(() => { fecharModalProduto(); limparFormulario(); mostrarToast('🚀 Produto cadastrado!'); });
+      }
+    }
+
+    function limparFormulario() {
+      document.getElementById('prodId').value = '';
+      document.getElementById('nomeInput').value = '';
+      document.getElementById('precoInput').value = '';
+      document.getElementById('descInput').value = '';
+      document.getElementById('fotoBase64').value = '';
+      document.getElementById('inputArquivoFoto').value = '';
+      document.getElementById('formTitle').innerText = '➕ Novo Produto ou Serviço';
+      document.getElementById('btnSalvar').innerText = 'Cadastrar Produto';
+    }
+
+    function editarProduto(id, nome, preco, desc, foto) {
+      document.getElementById('prodId').value = id;
+      document.getElementById('nomeInput').value = nome;
+      document.getElementById('precoInput').value = preco;
+      document.getElementById('descInput').value = desc;
+      document.getElementById('fotoBase64').value = foto;
+      document.getElementById('formTitle').innerText = '✏️ Editando Produto';
+      document.getElementById('btnSalvar').innerText = 'Salvar Alterações';
+      document.getElementById('modalProduto').style.display = 'flex';
+    }
+
+    function excluirProduto(id) {
+      if (confirm('Deseja remover este produto?')) {
+        db.collection('lojas').doc(lojaId).collection('produtos').doc(id).delete()
+          .then(() => mostrarToast('🗑️ Removido!'));
+      }
+    }
+
+    function copiarLinkCliente() {
+      navigator.clipboard.writeText(document.getElementById('urlClienteTexto').innerText).then(() => mostrarToast('📋 Link copiado!'));
+    }
+
+    if (lojaId) {
+      document.getElementById('telaLogin').style.display = 'none';
+      document.getElementById('painelAdmin').style.display = 'block';
+      document.getElementById('whatsappInput').value = lojaId;
+      carregarDadosLoja(lojaId);
+    }
+  </script>
+</body>
+</html>
