@@ -23,7 +23,6 @@
     
     .container { max-width: 1100px; margin: 20px auto; padding: 0 10px; }
     
-    /* MODAL DE DADOS DO CLIENTE (APARECE SÓ AO FINALIZAR) */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85);
       display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
@@ -50,7 +49,6 @@
     }
     .btn-gps:hover { background: var(--primary-hover); }
 
-    /* VITRINE COM 3 A 4 PRODUTOS LADO A LADO */
     .vitrine {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -87,7 +85,6 @@
     <div class="vitrine" id="vitrineProdutos">Carregando catálogo...</div>
   </div>
 
-  <!-- MODAL DE DADOS DO CLIENTE (ABRE SÓ AO CLICAR EM FINALIZAR) -->
   <div class="modal-overlay" id="modalCliente">
     <div class="modal-content">
       <div class="modal-header">
@@ -128,7 +125,7 @@
 
   <div class="rodape-carrinho" id="rodapeCarrinho" style="display: none;">
     <div>
-      <small style="color: var(--text-muted);">Total Calculado:</small><br>
+      <small style="color: var(--text-muted);">Total do Pedido:</small><br>
       <strong style="font-size: 18px; color: #60a5fa;" id="totalGeral">R$ 0,00</strong>
     </div>
     <button class="btn-enviar" onclick="abrirModalCliente()">Finalizar Compra / OS 🛒</button>
@@ -157,6 +154,9 @@
     let dadosLoja = {};
     let produtosLista = [];
     let linkMapaGPS = '';
+    
+    // TAXA DE R$ 1,00 ADICIONADA POR ITEM PARA O CLIENTE FINAL
+    const TAXA_POR_ITEM = 1.00;
 
     function carregarDadosClienteLocal() {
       const dadosSalvos = JSON.parse(localStorage.getItem('perfilClienteDelivery') || '{}');
@@ -176,13 +176,8 @@
       localStorage.setItem('perfilClienteDelivery', JSON.stringify(perfil));
     }
 
-    function abrirModalCliente() {
-      document.getElementById('modalCliente').style.display = 'flex';
-    }
-
-    function fecharModalCliente() {
-      document.getElementById('modalCliente').style.display = 'none';
-    }
+    function abrirModalCliente() { document.getElementById('modalCliente').style.display = 'flex'; }
+    function fecharModalCliente() { document.getElementById('modalCliente').style.display = 'none'; }
 
     if (!lojaId) {
       document.getElementById('tituloEmpresa').innerText = 'Loja não informada';
@@ -210,7 +205,9 @@
       db.collection('lojas').doc(lojaId).collection('produtos').onSnapshot(snapshot => {
         produtosLista = [];
         snapshot.forEach(doc => {
-          produtosLista.push({ id: doc.id, ...doc.data() });
+          const p = doc.data();
+          // Acrescenta R$ 1,00 no preço exibido para o cliente
+          produtosLista.push({ id: doc.id, ...p, precoClient: (parseFloat(p.preco) || 0) + TAXA_POR_ITEM });
         });
         renderizarVitrineLocal();
       });
@@ -251,7 +248,7 @@
     function alterarQtd(id, delta) {
       const prod = produtosLista.find(p => p.id === id);
       if (!prod) return;
-      if (!carrinho[id]) carrinho[id] = { nome: prod.nome, preco: prod.preco, qtd: 0 };
+      if (!carrinho[id]) carrinho[id] = { nome: prod.nome, preco: prod.precoClient, qtd: 0 };
       carrinho[id].qtd += delta;
       if (carrinho[id].qtd <= 0) delete carrinho[id];
       renderizarVitrineLocal();
@@ -271,7 +268,7 @@
                 <div class="descricao-prod">${p.descricao || ''}</div>
               </div>
               <div>
-                <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+                <div class="preco">R$ ${p.precoClient.toFixed(2)}</div>
                 <div class="controles">
                   ${qtd > 0 ? `<button class="btn-qtd btn-minus" onclick="alterarQtd('${p.id}', -1)">-</button>` : '<span></span>'}
                   <span>${qtd > 0 ? `<b>${qtd}</b>` : ''}</span>
@@ -336,7 +333,7 @@
       window.open(`https://wa.me/${whatsappVendedor}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    carregarDadosClienteLocal();
+    carregarDadosClienteListas = carregarDadosClienteLocal();
   </script>
 </body>
 </html>
