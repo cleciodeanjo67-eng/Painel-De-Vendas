@@ -38,7 +38,7 @@
 
     header {
       background: var(--card-bg); padding: 20px; border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 15px;
       display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
       border: 1px solid var(--border);
     }
@@ -51,6 +51,46 @@
     .btn-novo-item { background: var(--primary); color: white; border-color: var(--primary); }
     .btn-novo-item:hover { background: var(--primary-hover); }
 
+    /* PAINEL FINANCEIRO / TAXA DE R$ 1,00 POR ITEM */
+    .bloco-financeiro {
+      background: #1e293b;
+      border: 1px solid #3b82f6;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .calculadora-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .calc-card {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .calc-card span { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; }
+    .calc-card strong { font-size: 18px; color: #60a5fa; }
+
+    .area-pix-taxa {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #3b82f6;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+    .btn-copiar-pix { background: #16a34a; color: white; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+    .btn-copiar-pix:hover { background: #15803d; }
+
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8);
       display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
@@ -61,7 +101,7 @@
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .modal-header h3 { color: #60a5fa; font-size: 18px; }
-    .btn-fechar-modal { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+    .btn-fechar-modal { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; width: auto; padding: 0; }
 
     .link-compartilhar {
       margin-top: 15px; padding: 12px; background: #0f172a; border-radius: 6px;
@@ -109,7 +149,7 @@
 </head>
 <body>
 
-  <!-- TELA DE LOGIN / CADASTRO COM GMAIL OBRIGATÓRIO -->
+  <!-- TELA DE LOGIN / CADASTRO -->
   <div id="telaLogin">
     <h2>🔐 Acesso ao Painel</h2>
     <div class="auth-group">
@@ -139,6 +179,42 @@
         <button class="btn-link" onclick="sairPainel()" style="background: #dc2626; color: white; border: none; cursor: pointer;">Sair</button>
       </div>
     </header>
+
+    <!-- PAINEL FINANCEIRO: TAXA DE R$ 1,00 POR ITEM -->
+    <div class="bloco-financeiro" id="blocoFinanceiroTaxa">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="color: #60a5fa; font-size: 16px;">📊 Acerto de Taxa da Plataforma (R$ 1,00 por item)</h3>
+        <span style="font-size: 12px; background: #eab308; color: #0f172a; font-weight: bold; padding: 3px 8px; border-radius: 4px;">Acerto Flexível (Diário ou a cada 3 dias)</span>
+      </div>
+
+      <div class="calculadora-grid">
+        <div class="calc-card">
+          <span>Itens Cadastrados no Catálogo</span>
+          <strong id="qtdProdutosCalc">0</strong>
+        </div>
+        <div class="calc-card">
+          <span>Taxa Devida à Plataforma (R$ 1,00 / item)</span>
+          <strong style="color: #ef4444;" id="valorDevidoCalc">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="area-pix-taxa">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=SUA_CHAVE_PIX_AQUI" alt="QR Code Pix" style="width: 110px; height: 110px; background: white; padding: 4px; border-radius: 6px;">
+          <div>
+            <strong style="font-size: 14px; display: block; margin-bottom: 4px;">Pague a taxa de R$ 1,00 por item via Pix</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px; max-width: 280px;">Faça o acerto quando preferir (no mesmo dia ou a cada 3 dias). Após o pagamento, o QR Code some.</p>
+            <code style="font-size: 11px; color: #60a5fa;" id="chavePixTexto">sua-chave-pix-aqui</code>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn-copiar-pix" onclick="copiarChavePix()">📋 Copiar Chave Pix</button>
+          <a id="btnEnviarComprovantePix" href="#" target="_blank" style="background: #16a34a; color: white; padding: 9px 14px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 12px; text-align: center;">
+            📲 Enviar Comprovante
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- MODAL DE CONFIGURAÇÕES -->
     <div class="modal-overlay" id="modalConfig">
@@ -213,6 +289,8 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    const WHATSAPP_PLATAFORMA = "5564999999999"; // Seu WhatsApp para receber os comprovantes da taxa
+
     let lojaId = localStorage.getItem('sessaoLojaAdmin');
     let unsubLoja = null;
     let unsubProdutos = null;
@@ -229,7 +307,11 @@
     function abrirModalProduto() { limparFormulario(); document.getElementById('modalProduto').style.display = 'flex'; }
     function fecharModalProduto() { document.getElementById('modalProduto').style.display = 'none'; }
 
-    // LOGIN OU CADASTRO SEGURO COM FIREBASE AUTH
+    function copiarChavePix() {
+      const chave = document.getElementById('chavePixTexto').innerText;
+      navigator.clipboard.writeText(chave).then(() => mostrarToast('📋 Chave Pix copiada com sucesso!'));
+    }
+
     async function fazerLoginOuCadastro() {
       const email = document.getElementById('loginEmail').value.trim();
       const senha = document.getElementById('loginSenha').value.trim();
@@ -241,11 +323,9 @@
       }
 
       try {
-        // Tenta fazer login
         await auth.signInWithEmailAndPassword(email, senha);
         iniciarPainel(whatsapp);
       } catch (erroLogin) {
-        // Se a conta não existir, cria automaticamente
         try {
           await auth.createUserWithEmailAndPassword(email, senha);
           await db.collection('lojas').doc(whatsapp).set({
@@ -264,7 +344,6 @@
       }
     }
 
-    // RECUPERAÇÃO DE SENHA DIRETO PARA O GMAIL
     async function esqueciSenhaEmail() {
       const email = document.getElementById('loginEmail').value.trim();
       if (!email) {
@@ -274,7 +353,7 @@
 
       try {
         await auth.sendPasswordResetEmail(email);
-        alert('📧 Link de redefinição de senha enviado com sucesso para o seu e-mail (Gmail)! Verifique sua caixa de entrada ou spam.');
+        alert('📧 Link de redefinição de senha enviado com sucesso para o seu e-mail (Gmail)!');
       } catch (err) {
         alert('Erro ao enviar e-mail: ' + err.message);
       }
@@ -286,6 +365,10 @@
       document.getElementById('telaLogin').style.display = 'none';
       document.getElementById('painelAdmin').style.display = 'block';
       document.getElementById('whatsappInput').value = lojaId;
+      
+      const msgWpp = `Olá! Fiz o pagamento da taxa de R$ 1,00 por item da plataforma (Loja ID: ${lojaId}). Segue o comprovante:`;
+      document.getElementById('btnEnviarComprovantePix').href = `https://wa.me/${WHATSAPP_PLATAFORMA}?text=${encodeURIComponent(msgWpp)}`;
+
       carregarDadosLoja(lojaId);
     }
 
@@ -302,6 +385,19 @@
       unsubLoja = db.collection('lojas').doc(codigo).onSnapshot(doc => {
         if (doc.exists) {
           const data = doc.data();
+          
+          // Se houver uma data de última doação/acerto recente (ex: nos últimos 3 dias), oculta o QR Code
+          let mostrarTaxa = true;
+          if (data.ultimaDoacao) {
+            const dataAcerto = data.ultimaDoacao.toDate();
+            const hoje = new Date();
+            const diasPassados = Math.floor((hoje - dataAcerto) / (1000 * 60 * 60 * 24));
+            if (diasPassados < 3) { // Se acertou nos últimos 3 dias, some o QR Code
+              mostrarTaxa = false;
+            }
+          }
+          document.getElementById('blocoFinanceiroTaxa').style.display = mostrarTaxa ? 'flex' : 'none';
+
           document.getElementById('nomeEmpresaInput').value = data.nomeEmpresa || '';
           document.getElementById('cidadeInput').value = data.cidade || '';
           document.getElementById('ruaInput').value = data.rua || '';
@@ -314,7 +410,9 @@
 
       unsubProdutos = db.collection('lojas').doc(codigo).collection('produtos').onSnapshot(snapshot => {
         let html = '';
+        let totalProdutos = 0;
         snapshot.forEach(doc => {
+          totalProdutos++;
           const p = doc.data();
           const nomeEscapado = (p.nome || '').replace(/'/g, "\\'");
           const descEscapada = (p.descricao || '').replace(/'/g, "\\'");
@@ -334,6 +432,11 @@
             </div>
           `;
         });
+        document.getElementById('qtdProdutosCalc').innerText = totalProdutos;
+        // Calcula R$ 1,00 por item cadastrado (ou você pode adaptar para vendas reais depois)
+        const valorDevido = totalProdutos * 1.00;
+        document.getElementById('valorDevidoCalc').innerText = 'R$ ' + valorDevido.toFixed(2);
+
         document.getElementById('listaProdutos').innerHTML = html || '<p style="color: var(--text-muted); text-align: center; grid-column: 1 / -1; padding: 20px;">Nenhum produto cadastrado.</p>';
       });
     }
