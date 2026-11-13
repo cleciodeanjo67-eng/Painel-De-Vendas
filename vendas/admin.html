@@ -37,66 +37,52 @@
     #painelAdmin { display: none; }
 
     header {
-      background: var(--card-bg); padding: 20px; border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 15px;
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+      background: var(--card-bg); padding: 15px 20px; border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 20px;
       border: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; position: relative; gap: 12px;
     }
-    header h1 { font-size: 20px; color: #60a5fa; display: flex; align-items: center; gap: 8px; }
-    
-    .acoes-topo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .btn-link { background: #334155; color: #60a5fa; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600; border: 1px solid var(--border); }
-    .btn-engrenagem, .btn-novo-item { background: #334155; color: #cbd5e1; border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
-    .btn-engrenagem:hover, .btn-novo-item:hover { background: #475569; color: white; }
-    .btn-novo-item { background: var(--primary); color: white; border-color: var(--primary); }
+
+    .btn-novo-item {
+      background: var(--primary); color: white; border: none; padding: 10px 18px;
+      border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: 1;
+      transition: background 0.2s;
+    }
     .btn-novo-item:hover { background: var(--primary-hover); }
 
-    /* PAINEL FINANCEIRO / TAXA DE R$ 1,00 POR ITEM */
-    .bloco-financeiro {
-      background: #1e293b;
-      border: 1px solid #3b82f6;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .btn-engrenagem-topo {
+      background: #334155; color: #cbd5e1; border: 1px solid var(--border);
+      width: 42px; height: 42px; border-radius: 8px; cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+      flex-shrink: 0;
     }
-    .calculadora-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-    }
-    .calc-card {
-      background: #0f172a;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-    .calc-card span { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; }
-    .calc-card strong { font-size: 18px; color: #60a5fa; }
+    .btn-engrenagem-topo:hover { background: #475569; color: white; }
 
-    .area-pix-taxa {
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px dashed #3b82f6;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
+    .dropdown-menu {
+      position: absolute; top: 70px; right: 20px; background: var(--card-bg);
+      border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      width: 220px; display: none; flex-direction: column; z-index: 1000; overflow: hidden;
     }
-    .btn-copiar-pix { background: #16a34a; color: white; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+    .dropdown-menu a, .dropdown-menu button {
+      background: none; border: none; color: var(--text); padding: 12px 15px; text-align: left;
+      font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      text-decoration: none; width: 100%; transition: background 0.2s;
+    }
+    .dropdown-menu a:hover, .dropdown-menu button:hover { background: #334155; color: white; }
+    .dropdown-menu hr { border: 0; border-top: 1px solid var(--border); margin: 0; }
+    .dropdown-menu .sair-menu { color: #f87171; }
+    .dropdown-menu .sair-menu:hover { background: #7f1d1d; color: white; }
+
+    .btn-copiar-pix { background: #16a34a; color: white; border: none; padding: 11px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; width: 100%; text-align: center; }
     .btn-copiar-pix:hover { background: #15803d; }
 
     .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.8);
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85);
       display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
     }
     .modal-content {
-      background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 12px;
+      background: var(--card-bg); width: 100%; max-width: 550px; padding: 25px; border-radius: 12px;
       border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -110,8 +96,8 @@
     .link-compartilhar span { font-size: 12px; color: #cbd5e1; word-break: break-all; }
     .btn-copy { background: #16a34a; width: auto; padding: 6px 12px; font-size: 12px; border: none; color: white; border-radius: 4px; cursor: pointer; }
 
-    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 1px solid var(--border); }
-    .card h3 { font-size: 16px; margin-bottom: 15px; color: #60a5fa; }
+    .card { background: var(--card-bg); padding: 16px; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 1px solid var(--border); }
+    .card h3 { font-size: 15px; margin-bottom: 12px; color: #60a5fa; }
     
     .form-group { margin-bottom: 10px; }
     label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
@@ -122,24 +108,31 @@
     button { width: 100%; padding: 11px; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; color: white; }
     .btn-primary { background: var(--primary); }
     .btn-primary:hover { background: var(--primary-hover); }
-    .btn-danger { background: var(--danger); padding: 6px 10px; font-size: 12px; }
-    .btn-edit { background: #0284c7; padding: 6px 10px; font-size: 12px; }
+    .btn-danger { background: var(--danger); padding: 8px 12px; font-size: 12px; }
+    .btn-edit { background: #0284c7; padding: 5px 8px; font-size: 11px; }
 
     .lista-produtos {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
     }
     .produto-item {
-      background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid var(--border);
-      display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+      background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
     }
-    .produto-topo { display: flex; align-items: center; gap: 10px; }
+    .produto-topo { display: flex; align-items: center; gap: 8px; }
     .produto-topo img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; background: #334155; }
-    .produto-info h4 { font-size: 14px; color: var(--text); margin-bottom: 2px; }
-    .produto-info p { font-size: 13px; color: #60a5fa; font-weight: 600; }
-    .acoes { display: flex; gap: 6px; width: 100%; }
-    .acoes button { flex: 1; }
+    .produto-info h4 { font-size: 13px; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .produto-info p { font-size: 12px; color: #60a5fa; font-weight: 600; }
+    .acoes { display: flex; gap: 5px; width: 100%; }
+    .acoes button { flex: 1; padding: 5px; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #modalRelatorio, #modalRelatorio * { visibility: visible; }
+      #modalRelatorio { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
+      .btn-fechar-modal, .btn-primary, .btn-danger { display: none !important; }
+    }
     
     .toast { position: fixed; bottom: 20px; right: 20px; background: #334155; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; display: none; z-index: 3000; border: 1px solid var(--border); }
   </style>
@@ -170,48 +163,55 @@
 
   <!-- PAINEL PRINCIPAL -->
   <div class="container" id="painelAdmin">
+    
     <header>
-      <h1>⚙️ <span id="tituloLojaAtual" style="color: white;">Empresa</span></h1>
-      <div class="acoes-topo">
-        <a href="#" id="btnVerLoja" target="_blank" class="btn-link" style="display: none;">👁️ Ver Catálogo</a>
-        <button class="btn-novo-item" onclick="abrirModalProduto()">+ Novo Produto ou Serviço</button>
-        <button class="btn-engrenagem" onclick="abrirConfiguracoes()" title="Configurações da Empresa">⚙️ Configurações</button>
-        <button class="btn-link" onclick="sairPainel()" style="background: #dc2626; color: white; border: none; cursor: pointer;">Sair</button>
+      <button class="btn-novo-item" onclick="abrirModalProduto()">+ Novo Produto ou Serviço</button>
+      <button class="btn-engrenagem-topo" onclick="toggleMenuDropdown(event)" title="Configurações e Menu">⚙️</button>
+      
+      <div class="dropdown-menu" id="menuDropdown">
+        <a href="#" id="btnVerLoja" target="_blank" style="display: none;">👁️ Ver Catálogo</a>
+        <button onclick="abrirRelatorioVendas()">📊 Relatório de Vendas</button>
+        <button onclick="abrirModalQrCode()">📱 Pix / QR Mensalidade</button>
+        <button onclick="abrirConfiguracoes()">⚙️ Ajustes da Empresa</button>
+        <hr>
+        <button class="sair-menu" onclick="sairPainel()">🚪 Sair</button>
       </div>
     </header>
 
-    <!-- PAINEL FINANCEIRO: TAXA DE R$ 1,00 POR ITEM -->
-    <div class="bloco-financeiro" id="blocoFinanceiroTaxa">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="color: #60a5fa; font-size: 16px;">📊 Acerto de Taxa da Plataforma (R$ 1,00 por item)</h3>
-        <span style="font-size: 12px; background: #eab308; color: #0f172a; font-weight: bold; padding: 3px 8px; border-radius: 4px;">Acerto Flexível (Diário ou a cada 3 dias)</span>
+    <!-- MODAL DO QR CODE -->
+    <div class="modal-overlay" id="modalQrCodeGrande">
+      <div class="modal-content" style="text-align: center;">
+        <div class="modal-header">
+          <h3>📱 Pix / QR Mensalidade</h3>
+          <button class="btn-fechar-modal" onclick="fecharModalQrCode()">&times;</button>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Escaneie o QR Code abaixo com o app do seu banco ou copie a chave Pix:</p>
+        <img src="https://i.postimg.cc/hjYNs2q8/Code-Generated-Image.png" alt="QR Code Pix" style="width: 190px; height: 190px; background: white; padding: 6px; border-radius: 8px; margin-bottom: 15px; object-fit: contain;" crossorigin="anonymous">
+        <div style="background: #0f172a; padding: 12px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 15px; text-align: left;">
+          <strong style="font-size: 13px; display: block; color: #60a5fa; margin-bottom: 2px;">José Clécio dos Santos Gomes</strong>
+          <span style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">Chave Pix (E-mail):</span>
+          <code style="font-size: 14px; color: white; word-break: break-all;" id="chavePixPlataformaTexto">cleciodeanjo67@gmail.com</code>
+        </div>
+        <button class="btn-copiar-pix" onclick="copiarChavePlataforma()" style="margin-bottom: 10px;">📋 Copiar E-mail Pix</button>
+        <a id="btnEnviarComprovantePix" href="#" target="_blank" style="display: block; background: #16a34a; color: white; padding: 11px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; text-align: center;">
+          📲 Enviar Comprovante no WhatsApp
+        </a>
       </div>
+    </div>
 
-      <div class="calculadora-grid">
-        <div class="calc-card">
-          <span>Itens Cadastrados no Catálogo</span>
-          <strong id="qtdProdutosCalc">0</strong>
+    <!-- MODAL DE RELATÓRIO DE VENDAS -->
+    <div class="modal-overlay" id="modalRelatorio">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>📊 Relatório de Vendas e Faturamento</h3>
+          <button class="btn-fechar-modal" onclick="fecharRelatorioVendas()">&times;</button>
         </div>
-        <div class="calc-card">
-          <span>Taxa Devida à Plataforma (R$ 1,00 / item)</span>
-          <strong style="color: #ef4444;" id="valorDevidoCalc">R$ 0,00</strong>
+        <div id="conteudoRelatorio" style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+          Carregando relatório...
         </div>
-      </div>
-
-      <div class="area-pix-taxa">
-        <div style="display: flex; align-items: center; gap: 15px;">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=SUA_CHAVE_PIX_AQUI" alt="QR Code Pix" style="width: 110px; height: 110px; background: white; padding: 4px; border-radius: 6px;">
-          <div>
-            <strong style="font-size: 14px; display: block; margin-bottom: 4px;">Pague a taxa de R$ 1,00 por item via Pix</strong>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px; max-width: 280px;">Faça o acerto quando preferir (no mesmo dia ou a cada 3 dias). Após o pagamento, o QR Code some.</p>
-            <code style="font-size: 11px; color: #60a5fa;" id="chavePixTexto">sua-chave-pix-aqui</code>
-          </div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button class="btn-copiar-pix" onclick="copiarChavePix()">📋 Copiar Chave Pix</button>
-          <a id="btnEnviarComprovantePix" href="#" target="_blank" style="background: #16a34a; color: white; padding: 9px 14px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 12px; text-align: center;">
-            📲 Enviar Comprovante
-          </a>
+        <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn-primary" onclick="window.print()" style="flex: 1;">🖨️ Imprimir / Salvar PDF</button>
+          <button class="btn-danger" onclick="apagarHistoricoVendas()" style="flex: 1;">🗑️ Apagar Histórico</button>
         </div>
       </div>
     </div>
@@ -228,6 +228,18 @@
         <div class="form-group"><label>Cidade</label><input type="text" id="cidadeInput" placeholder="Ex: Vicentinópolis"></div>
         <div class="form-group"><label>Rua / Logradouro</label><input type="text" id="ruaInput" placeholder="Ex: Rua Principal"></div>
         <div class="form-group"><label>Estado (UF)</label><input type="text" id="estadoInput" placeholder="Ex: GO"></div>
+        <div class="form-group">
+          <label><strong>Chave Pix do Vendedor (Para receber dos clientes) *</strong></label>
+          <input type="text" id="pixVendedorInput" placeholder="Ex: CPF, CNPJ, E-mail, Celular ou Chave">
+        </div>
+        
+        <div class="form-group">
+          <label><strong>Foto de Fundo do Topo (Capa do Catálogo)</strong></label>
+          <input type="file" id="inputArquivoCapa" accept="image/*" onchange="converterCapaParaBase64(event)" style="padding: 6px;">
+          <span id="statusCapa" style="font-size: 11px; color: #34d399; display: block; margin-top: 4px;">Nenhuma nova foto selecionada</span>
+          <input type="hidden" id="capaBase64Input">
+        </div>
+
         <div class="form-group"><label>E-mail Cadastrado</label><input type="text" id="emailInputPerfil" disabled style="opacity: 0.7; cursor: not-allowed;"></div>
         <div class="form-group"><label>WhatsApp - <b>ID Principal</b></label><input type="text" id="whatsappInput" disabled style="opacity: 0.7; cursor: not-allowed;"></div>
         
@@ -240,7 +252,7 @@
       </div>
     </div>
 
-    <!-- MODAL DE CADASTRO / EDIÇÃO DE PRODUTO -->
+    <!-- MODAL DE PRODUTOS -->
     <div class="modal-overlay" id="modalProduto">
       <div class="modal-content">
         <div class="modal-header">
@@ -260,7 +272,6 @@
       </div>
     </div>
 
-    <!-- TELA PRINCIPAL -->
     <div class="grid-admin">
       <div class="card">
         <h3>📦 Catálogo Online Sincronizado</h3>
@@ -289,11 +300,14 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const WHATSAPP_PLATAFORMA = "5564999999999"; // Seu WhatsApp para receber os comprovantes da taxa
+    const CHAVE_PIX_PLATAFORMA = "cleciodeanjo67@gmail.com";
+    const WHATSAPP_PLATAFORMA = "5564999999999";
 
     let lojaId = localStorage.getItem('sessaoLojaAdmin');
     let unsubLoja = null;
     let unsubProdutos = null;
+    let totalProdutosCadastrados = 0;
+    let listaProdutosArray = [];
 
     function mostrarToast(mensagem) {
       const t = document.getElementById('toastMsg');
@@ -302,25 +316,105 @@
       setTimeout(() => { t.style.display = 'none'; }, 3000);
     }
 
+    function toggleMenuDropdown(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('menuDropdown');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('click', () => {
+      const menu = document.getElementById('menuDropdown');
+      if (menu) menu.style.display = 'none';
+    });
+
     function abrirConfiguracoes() { document.getElementById('modalConfig').style.display = 'flex'; }
     function fecharConfiguracoes() { document.getElementById('modalConfig').style.display = 'none'; }
     function abrirModalProduto() { limparFormulario(); document.getElementById('modalProduto').style.display = 'flex'; }
     function fecharModalProduto() { document.getElementById('modalProduto').style.display = 'none'; }
+    function abrirModalQrCode() { document.getElementById('modalQrCodeGrande').style.display = 'flex'; }
+    function fecharModalQrCode() { document.getElementById('modalQrCodeGrande').style.display = 'none'; }
 
-    function copiarChavePix() {
-      const chave = document.getElementById('chavePixTexto').innerText;
-      navigator.clipboard.writeText(chave).then(() => mostrarToast('📋 Chave Pix copiada com sucesso!'));
+    async function abrirRelatorioVendas() {
+      document.getElementById('modalRelatorio').style.display = 'flex';
+      const divRel = document.getElementById('conteudoRelatorio');
+      divRel.innerHTML = 'Calculando relatório...';
+      if (!lojaId) return;
+
+      try {
+        const snapshot = await db.collection('lojas').doc(lojaId).collection('pedidos').get();
+        let totalVendidoGeral = 0;
+        let totalPedidos = 0;
+        let itensVendidosMap = {};
+
+        snapshot.forEach(doc => {
+          const pedido = doc.data();
+          totalPedidos++;
+          totalVendidoGeral += (pedido.valorTotal || 0);
+          if (pedido.itens && Array.isArray(pedido.itens)) {
+            pedido.itens.forEach(item => {
+              if (!itensVendidosMap[item.nome]) {
+                itensVendidosMap[item.nome] = { qtd: 0, total: 0 };
+              }
+              itensVendidosMap[item.nome].qtd += item.qtd;
+              itensVendidosMap[item.nome].total += (item.preco * item.qtd);
+            });
+          }
+        });
+
+        let itensHtml = '';
+        for (let nome in itensVendidosMap) {
+          let dados = itensVendidosMap[nome];
+          itensHtml += `<tr><td style="padding: 6px; border-bottom: 1px solid var(--border);">${nome}</td><td style="padding: 6px; border-bottom: 1px solid var(--border); text-align: center;">${dados.qtd}x</td><td style="padding: 6px; border-bottom: 1px solid var(--border); text-align: right;">R$ ${dados.total.toFixed(2)}</td></tr>`;
+        }
+
+        divRel.innerHTML = `
+          <p><b>Loja ID:</b> ${lojaId}</p>
+          <p><b>Total de Pedidos:</b> ${totalPedidos}</p>
+          <p style="font-size: 15px; color: #60a5fa; margin-top: 6px;"><b>Soma Total Vendida:</b> R$ ${totalVendidoGeral.toFixed(2)}</p>
+          <hr style="border: 0; border-top: 1px solid var(--border); margin: 12px 0;">
+          <p><b>Detalhamento de Itens:</b></p>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+            <thead>
+              <tr style="background: #0f172a; color: #60a5fa; font-size: 12px;">
+                <th style="padding: 6px; text-align: left;">Item</th>
+                <th style="padding: 6px; text-align: center;">Qtd</th>
+                <th style="padding: 6px; text-align: right;">Total (R$)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itensHtml || '<tr><td colspan="3" style="text-align: center; padding: 10px; color: var(--text-muted);">Nenhuma venda registrada.</td></tr>'}
+            </tbody>
+          </table>
+        `;
+      } catch (e) {
+        divRel.innerHTML = `<p style="color: #f87171;">Erro: ${e.message}</p>`;
+      }
     }
+
+    async function apagarHistoricoVendas() {
+      if (!confirm('Deseja apagar todo o histórico de vendas?')) return;
+      try {
+        const ref = db.collection('lojas').doc(lojaId).collection('pedidos');
+        const snapshot = await ref.get();
+        let batch = db.batch();
+        snapshot.forEach(doc => { batch.delete(doc.ref); });
+        await batch.commit();
+        mostrarToast('🗑️ Histórico apagado!');
+        abrirRelatorioVendas();
+      } catch (e) {
+        alert('Erro: ' + e.message);
+      }
+    }
+
+    function fecharRelatorioVendas() { document.getElementById('modalRelatorio').style.display = 'none'; }
+    function copiarChavePlataforma() { navigator.clipboard.writeText(CHAVE_PIX_PLATAFORMA).then(() => mostrarToast('📋 Pix copiado!')); }
 
     async function fazerLoginOuCadastro() {
       const email = document.getElementById('loginEmail').value.trim();
       const senha = document.getElementById('loginSenha').value.trim();
       const whatsapp = document.getElementById('loginWhatsapp').value.replace(/\D/g, '');
 
-      if (!email || !senha || !whatsapp) {
-        alert('Preencha o E-mail, a Senha e o WhatsApp!');
-        return;
-      }
+      if (!email || !senha || !whatsapp) { alert('Preencha todos os campos!'); return; }
 
       try {
         await auth.signInWithEmailAndPassword(email, senha);
@@ -329,34 +423,25 @@
         try {
           await auth.createUserWithEmailAndPassword(email, senha);
           await db.collection('lojas').doc(whatsapp).set({
-            email: email,
-            whatsapp: whatsapp,
-            nomeEmpresa: 'Minha Empresa',
-            cidade: '', rua: '', estado: '',
-            criadoEm: new Date()
+            email, whatsapp, nomeEmpresa: 'Minha Empresa',
+            cidade: '', rua: '', estado: '', pixVendedor: '', capaUrl: '', criadoEm: new Date()
           });
           iniciarPainel(whatsapp);
           abrirConfiguracoes();
-          mostrarToast('🚀 Conta criada com sucesso! Preencha os dados da empresa ⚙️.');
+          mostrarToast('🚀 Conta criada! Preencha os dados.');
         } catch (erroCadastro) {
-          alert('Erro ao entrar/cadastrar: ' + erroCadastro.message);
+          alert('Erro: ' + erroCadastro.message);
         }
       }
     }
 
     async function esqueciSenhaEmail() {
       const email = document.getElementById('loginEmail').value.trim();
-      if (!email) {
-        alert('Digite o seu e-mail no campo acima antes de pedir a recuperação!');
-        return;
-      }
-
+      if (!email) { alert('Digite seu e-mail!'); return; }
       try {
         await auth.sendPasswordResetEmail(email);
-        alert('📧 Link de redefinição de senha enviado com sucesso para o seu e-mail (Gmail)!');
-      } catch (err) {
-        alert('Erro ao enviar e-mail: ' + err.message);
-      }
+        alert('📧 E-mail de recuperação enviado!');
+      } catch (err) { alert('Erro: ' + err.message); }
     }
 
     function iniciarPainel(codigo) {
@@ -365,10 +450,7 @@
       document.getElementById('telaLogin').style.display = 'none';
       document.getElementById('painelAdmin').style.display = 'block';
       document.getElementById('whatsappInput').value = lojaId;
-      
-      const msgWpp = `Olá! Fiz o pagamento da taxa de R$ 1,00 por item da plataforma (Loja ID: ${lojaId}). Segue o comprovante:`;
-      document.getElementById('btnEnviarComprovantePix').href = `https://wa.me/${WHATSAPP_PLATAFORMA}?text=${encodeURIComponent(msgWpp)}`;
-
+      document.getElementById('btnEnviarComprovantePix').href = `https://wa.me/${WHATSAPP_PLATAFORMA}?text=${encodeURIComponent('Comprovante Loja ID: ' + lojaId)}`;
       carregarDadosLoja(lojaId);
     }
 
@@ -385,35 +467,32 @@
       unsubLoja = db.collection('lojas').doc(codigo).onSnapshot(doc => {
         if (doc.exists) {
           const data = doc.data();
-          
-          // Se houver uma data de última doação/acerto recente (ex: nos últimos 3 dias), oculta o QR Code
-          let mostrarTaxa = true;
-          if (data.ultimaDoacao) {
-            const dataAcerto = data.ultimaDoacao.toDate();
-            const hoje = new Date();
-            const diasPassados = Math.floor((hoje - dataAcerto) / (1000 * 60 * 60 * 24));
-            if (diasPassados < 3) { // Se acertou nos últimos 3 dias, some o QR Code
-              mostrarTaxa = false;
-            }
-          }
-          document.getElementById('blocoFinanceiroTaxa').style.display = mostrarTaxa ? 'flex' : 'none';
-
           document.getElementById('nomeEmpresaInput').value = data.nomeEmpresa || '';
           document.getElementById('cidadeInput').value = data.cidade || '';
           document.getElementById('ruaInput').value = data.rua || '';
           document.getElementById('estadoInput').value = data.estado || '';
+          document.getElementById('pixVendedorInput').value = data.pixVendedor || '';
           document.getElementById('emailInputPerfil').value = data.email || '';
-          document.getElementById('tituloLojaAtual').innerText = data.nomeEmpresa || 'Minha Empresa';
+          
+          if (data.capaUrl) {
+            document.getElementById('capaBase64Input').value = data.capaUrl;
+            document.getElementById('statusCapa').innerText = '✅ Foto de capa salva e ativa no sistema!';
+          } else {
+            document.getElementById('statusCapa').innerText = 'Nenhuma foto de capa salva atualmente.';
+          }
+
           if (data.nomeEmpresa && data.nomeEmpresa !== 'Minha Empresa') liberarLinkCliente(codigo);
         }
       });
 
       unsubProdutos = db.collection('lojas').doc(codigo).collection('produtos').onSnapshot(snapshot => {
         let html = '';
-        let totalProdutos = 0;
+        totalProdutosCadastrados = 0;
+        listaProdutosArray = [];
         snapshot.forEach(doc => {
-          totalProdutos++;
+          totalProdutosCadastrados++;
           const p = doc.data();
+          listaProdutosArray.push(p);
           const nomeEscapado = (p.nome || '').replace(/'/g, "\\'");
           const descEscapada = (p.descricao || '').replace(/'/g, "\\'");
           html += `
@@ -432,11 +511,6 @@
             </div>
           `;
         });
-        document.getElementById('qtdProdutosCalc').innerText = totalProdutos;
-        // Calcula R$ 1,00 por item cadastrado (ou você pode adaptar para vendas reais depois)
-        const valorDevido = totalProdutos * 1.00;
-        document.getElementById('valorDevidoCalc').innerText = 'R$ ' + valorDevido.toFixed(2);
-
         document.getElementById('listaProdutos').innerHTML = html || '<p style="color: var(--text-muted); text-align: center; grid-column: 1 / -1; padding: 20px;">Nenhum produto cadastrado.</p>';
       });
     }
@@ -447,11 +521,49 @@
       document.getElementById('urlClienteTexto').innerText = linkCliente;
       const btnVer = document.getElementById('btnVerLoja');
       btnVer.href = linkCliente;
-      btnVer.style.display = 'inline-block';
+      btnVer.style.display = 'flex';
       const bloco = document.getElementById('blocoLinkCliente');
       bloco.style.opacity = '1';
       const btnC = document.getElementById('btnCopiarLink');
       btnC.disabled = false; btnC.style.background = '#16a34a'; btnC.style.cursor = 'pointer';
+    }
+
+    // Função otimizada para comprimir e garantir a conversão perfeita da capa
+    function converterCapaParaBase64(event) {
+      const arquivo = event.target.files[0];
+      if (!arquivo) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Redimensiona o banner/capa para otimizar espaço mantendo a qualidade
+          let width = img.width;
+          let height = img.height;
+          const maxDimension = 900;
+          
+          if (width > height && width > maxDimension) {
+            height *= maxDimension / width;
+            width = maxDimension;
+          } else if (height > maxDimension) {
+            width *= maxDimension / height;
+            height = maxDimension;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          document.getElementById('capaBase64Input').value = dataUrl;
+          document.getElementById('statusCapa').innerText = '✅ Foto de capa processada com sucesso! Clique em "Salvar Alterações".';
+        };
+      };
+      reader.readAsDataURL(arquivo);
     }
 
     function converterImagemParaBase64(event) {
@@ -467,15 +579,21 @@
       const cidade = document.getElementById('cidadeInput').value.trim();
       const rua = document.getElementById('ruaInput').value.trim();
       const estado = document.getElementById('estadoInput').value.trim();
+      const pixVendedor = document.getElementById('pixVendedorInput').value.trim();
+      const capaUrl = document.getElementById('capaBase64Input').value.trim();
+      
       if (!nomeEmpresa) { alert('Informe o nome da empresa!'); return; }
 
-      let dadosAtualizacao = { nomeEmpresa, cidade, rua, estado, atualizadoEm: new Date() };
+      let dadosAtualizacao = { nomeEmpresa, cidade, rua, estado, pixVendedor, capaUrl, atualizadoEm: new Date() };
 
       db.collection('lojas').doc(lojaId).set(dadosAtualizacao, { merge: true })
         .then(() => {
           liberarLinkCliente(lojaId);
           fecharConfiguracoes();
-          mostrarToast('✅ Configurações salvas com sucesso!');
+          mostrarToast('✅ Configurações e Capa salvas na base de dados com sucesso!');
+        })
+        .catch(err => {
+          alert('Erro ao salvar no banco: ' + err.message);
         });
     }
 
@@ -485,7 +603,7 @@
       const preco = parseFloat(document.getElementById('precoInput').value) || 0;
       const descricao = document.getElementById('descInput').value;
       let fotoUrl = document.getElementById('fotoBase64').value;
-      if (!nome || !preco) { alert('Preencha o Nome e o Preço!'); return; }
+      if (!nome || !preco) { alert('Preencha Nome e Preço!'); return; }
       if (!id && !fotoUrl) fotoUrl = 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500';
 
       const dados = { nome, preco, descricao, atualizadoEm: new Date() };
