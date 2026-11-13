@@ -3,133 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo Online & Ordem de Serviço</title>
+  <title>Catálogo Online - Produtos e Serviços</title>
   <style>
     :root {
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
       --bg: #0f172a;
-      --card-bg: #1e293b;
+      --card-bg: rgba(30, 41, 59, 0.4);
       --text: #f8fafc;
       --text-muted: #94a3b8;
-      --border: #334155;
+      --border: rgba(51, 65, 85, 0.6);
     }
     * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
-    body { padding-bottom: 90px; background-color: var(--bg); color: var(--text); }
+    body { background-color: var(--bg); color: var(--text); padding: 15px; padding-bottom: 90px; }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    /* CABEÇALHO DA LOJA COM SUPORTE ROBUSTO A FOTO DE FUNDO */
+    .loja-header {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(37, 99, 235, 0.8));
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+      position: relative;
+      overflow: hidden;
+      padding: 30px 20px; border-radius: 12px; text-align: center; margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); border: 1px solid var(--border);
+    }
+    .loja-header::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.68);
+      z-index: 1;
+    }
+    .loja-header > * { position: relative; z-index: 2; }
+
+    .loja-header h1 { font-size: 22px; color: white; margin-bottom: 4px; }
+    .loja-header p { font-size: 13px; color: #93c5fd; }
+
+    h2 { font-size: 16px; color: #60a5fa; margin-bottom: 12px; }
+
+    /* GRADE DE PRODUTOS COMPACTA */
+    .lista-produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
     
-    header { background: var(--primary); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-    header h1 { font-size: 22px; font-weight: bold; margin-bottom: 4px; color: #ffffff; }
-    header p { font-size: 13px; opacity: 0.9; color: #93c5fd; }
-    
-    .container { max-width: 1100px; margin: 20px auto; padding: 0 10px; }
-    
+    .produto-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(6px);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      justify-content: space-between; gap: 8px; text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .produto-card img {
+      width: 96px;
+      height: 96px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #334155;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .produto-info h3 { font-size: 13px; color: var(--text); margin-bottom: 2px; }
+    .produto-info p { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+    .produto-preco { font-size: 13px; color: #60a5fa; font-weight: bold; }
+
+    .qtd-controle {
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+    }
+    .btn-qtd {
+      background: var(--primary); color: white; border: none; width: 28px; height: 28px;
+      border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-qtd:hover { background: var(--primary-hover); }
+    .qtd-numero { font-size: 13px; font-weight: bold; color: white; min-width: 20px; text-align: center; }
+
+    .barra-carrinho {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border); padding: 12px 20px;
+      display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+    }
+    .carrinho-info { font-size: 13px; color: #93c5fd; }
+    .btn-finalizar {
+      background: #16a34a; color: white; border: none; padding: 10px 20px;
+      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px;
+    }
+    .btn-finalizar:hover { background: #15803d; }
+
     .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85);
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px);
       display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
     }
     .modal-content {
-      background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 12px;
-      border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
+      background: #1e293b; width: 100%; max-width: 420px; padding: 20px;
+      border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      max-height: 90vh; overflow-y: auto;
     }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .modal-header h3 { color: #60a5fa; font-size: 18px; }
-    .btn-fechar-modal { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .modal-header h3 { color: #60a5fa; font-size: 16px; }
+    .btn-fechar { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
 
-    .form-group { margin-bottom: 12px; }
-    .form-row { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
-    label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; }
-    input, textarea { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; color: var(--text); outline: none; }
-    input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
-    textarea { resize: vertical; height: 60px; }
-    
+    .form-group { margin-bottom: 10px; text-align: left; }
+    .form-group label { display: block; font-size: 11px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 8px; background: #0f172a; border: 1px solid var(--border);
+      border-radius: 5px; font-size: 13px; color: white; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+
     .btn-gps {
-      background: var(--primary); color: white; border: none; padding: 8px 12px;
-      border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
-      margin-top: 5px; display: inline-flex; align-items: center; gap: 5px;
+      background: #0284c7; color: white; border: none; padding: 9px;
+      border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 12px;
+      width: 100%; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .btn-gps:hover { background: var(--primary-hover); }
+    .btn-gps:hover { background: #0369a1; }
 
-    .vitrine {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 15px;
+    .toast {
+      position: fixed; bottom: 70px; right: 20px; background: #334155; color: white;
+      padding: 8px 14px; border-radius: 6px; font-size: 12px; display: none; z-index: 3000;
+      border: 1px solid var(--border);
     }
-    
-    .card-prod { background: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 1px solid var(--border); display: flex; flex-direction: column; }
-    .card-prod img { width: 100%; height: 120px; object-fit: cover; background: #334155; }
-    .card-body { padding: 12px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
-    .card-body h4 { font-size: 14px; color: var(--text); margin-bottom: 4px; }
-    .descricao-prod { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-    .preco { color: #60a5fa; font-weight: bold; font-size: 15px; margin-bottom: 8px; }
-    
-    .controles { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 8px; }
-    .btn-qtd { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
-    .btn-minus { background: #dc2626; }
-    
-    .rodape-carrinho { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); padding: 15px 20px; border-top: 2px solid var(--primary); box-shadow: 0 -4px 10px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-    .btn-enviar { background: var(--primary); color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 15px; transition: background 0.2s; }
-    .btn-enviar:hover { background: var(--primary-hover); }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-  <header>
-    <h1 id="tituloEmpresa">Carregando...</h1>
-    <p id="subtituloLocal">Catálogo & Ordem de Serviço</p>
-  </header>
-
   <div class="container">
-    <h3 style="color: #60a5fa; margin-bottom: 15px; font-size: 18px;">🛍️ Catálogo de Produtos e Serviços</h3>
-    <div class="vitrine" id="vitrineProdutos">Carregando catálogo...</div>
+    <!-- CABEÇALHO DINÂMICO DA LOJA -->
+    <div class="loja-header" id="lojaHeader">
+      <h1 id="nomeLojaTitulo">Carregando Loja...</h1>
+      <p id="enderecoLojaSub">Aguarde os dados...</p>
+    </div>
+
+    <h2>📦 Catálogo de Produtos e Serviços</h2>
+    <div class="lista-produtos" id="catalogoProdutos">
+      <p style="color: var(--text-muted); grid-column: 1 / -1; text-align: center;">Carregando produtos...</p>
+    </div>
   </div>
 
-  <div class="modal-overlay" id="modalCliente">
+  <!-- BARRA FLUTUANTE DE FINALIZAR PEDIDO -->
+  <div class="barra-carrinho" id="barraCarrinho" style="display: none;">
+    <div class="carrinho-info" id="carrinhoInfo">0 itens selecionados</div>
+    <button class="btn-finalizar" onclick="abrirModalCadastro()">Finalizar Pedido</button>
+  </div>
+
+  <!-- MODAL DE CADASTRO DO CLIENTE -->
+  <div class="modal-overlay" id="modalCadastro">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📍 Seus Dados para Entrega / OS</h3>
-        <button class="btn-fechar-modal" onclick="fecharModalCliente()">&times;</button>
+        <h3>📝 Seus Dados para Entrega</h3>
+        <button class="btn-fechar" onclick="fecharModalCadastro()">&times;</button>
+      </div>
+
+      <button class="btn-gps" onclick="obterLocalizacaoGPS()">📍 Preencher Endereço com GPS Atual</button>
+
+      <div class="form-group">
+        <label>Nome *</label>
+        <input type="text" id="clienteNome" placeholder="Seu nome completo">
+      </div>
+      <div class="form-group">
+        <label>Cidade *</label>
+        <input type="text" id="clienteCidade" placeholder="Sua cidade">
+      </div>
+      <div class="form-group">
+        <label>Rua *</label>
+        <input type="text" id="clienteRua" placeholder="Nome da rua / número">
+      </div>
+      <div class="form-group">
+        <label>Bairro *</label>
+        <input type="text" id="clienteBairro" placeholder="Seu bairro">
+      </div>
+      <div class="form-group">
+        <label>Estado (UF) *</label>
+        <input type="text" id="clienteEstado" placeholder="Ex: GO">
       </div>
 
       <div class="form-group">
-        <label><strong>Seu Nome / Empresa *</strong></label>
-        <input type="text" id="nomeCliente" placeholder="Digite seu nome" onchange="salvarDadosClienteLocal()">
-      </div>
-      
-      <div class="form-group">
-        <label><strong>Endereço (Rua / Bairro) *</strong></label>
-        <input type="text" id="enderecoCliente" placeholder="Nome da rua ou bairro..." onchange="salvarDadosClienteLocal()">
-        <button type="button" class="btn-gps" onclick="buscarLocalizacaoGPS()">📍 Usar GPS para preencher rua</button>
+        <label>Forma de Pagamento *</label>
+        <select id="formaPagamento" onchange="verificarPagamentoDinheiro()">
+          <option value="Pix">Pix</option>
+          <option value="Cartão">Cartão</option>
+          <option value="Dinheiro">Dinheiro</option>
+        </select>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label><strong>Número *</strong></label>
-          <input type="text" id="numeroCliente" placeholder="Ex: 123 ou S/N" onchange="salvarDadosClienteLocal()">
-        </div>
-        <div class="form-group">
-          <label><strong>Complemento</strong></label>
-          <input type="text" id="complementoCliente" placeholder="Apto, Bloco..." onchange="salvarDadosClienteLocal()">
-        </div>
+      <div class="form-group" id="blocoTroco" style="display: none;">
+        <label>Troco para quanto? (Opcional)</label>
+        <input type="text" id="clienteTroco" placeholder="Ex: Levar troco para R$ 50,00">
       </div>
 
       <div class="form-group">
-        <label><strong>Observação / Descrição (Opcional)</strong></label>
-        <textarea id="obsCliente" placeholder="Ex: Ponto de referência, urgência..."></textarea>
+        <label>Observação (Opcional)</label>
+        <textarea id="clienteObs" placeholder="Ex: Ponto de referência..."></textarea>
       </div>
 
-      <button class="btn-primary" onclick="enviarOrdemServico()" style="margin-top: 10px; width: 100%; padding: 12px; background: #16a34a; font-weight: bold;">Confirmar e Enviar para o WhatsApp 📲</button>
+      <input type="hidden" id="gpsLinkMaps" value="">
+
+      <button class="btn-finalizar" style="width: 100%; margin-top: 5px;" onclick="enviarPedidoWhatsApp()">📲 Enviar Pedido no WhatsApp</button>
     </div>
   </div>
 
-  <div class="rodape-carrinho" id="rodapeCarrinho" style="display: none;">
-    <div>
-      <small style="color: var(--text-muted);">Total do Pedido:</small><br>
-      <strong style="font-size: 18px; color: #60a5fa;" id="totalGeral">R$ 0,00</strong>
-    </div>
-    <button class="btn-enviar" onclick="abrirModalCliente()">Finalizar Compra / OS 🛒</button>
-  </div>
+  <div class="toast" id="toastMsg">Ação realizada!</div>
 
   <script>
     const firebaseConfig = {
@@ -149,191 +233,232 @@
     const urlParams = new URLSearchParams(window.location.search);
     let lojaId = urlParams.get('loja');
 
-    let carrinho = {}; 
-    let whatsappVendedor = '';
-    let dadosLoja = {};
-    let produtosLista = [];
-    let linkMapaGPS = '';
-    
-    // TAXA DE R$ 1,00 ADICIONADA POR ITEM PARA O CLIENTE FINAL
-    const TAXA_POR_ITEM = 1.00;
-
-    function carregarDadosClienteLocal() {
-      const dadosSalvos = JSON.parse(localStorage.getItem('perfilClienteDelivery') || '{}');
-      if (dadosSalvos.nome) document.getElementById('nomeCliente').value = dadosSalvos.nome;
-      if (dadosSalvos.endereco) document.getElementById('enderecoCliente').value = dadosSalvos.endereco;
-      if (dadosSalvos.numero) document.getElementById('numeroCliente').value = dadosSalvos.numero;
-      if (dadosSalvos.complemento) document.getElementById('complementoCliente').value = dadosSalvos.complemento;
+    if (!lojaId) {
+      lojaId = localStorage.getItem('sessaoLojaAdmin');
     }
 
-    function salvarDadosClienteLocal() {
-      const perfil = {
-        nome: document.getElementById('nomeCliente').value.trim(),
-        endereco: document.getElementById('enderecoCliente').value.trim(),
-        numero: document.getElementById('numeroCliente').value.trim(),
-        complemento: document.getElementById('complementoCliente').value.trim()
-      };
-      localStorage.setItem('perfilClienteDelivery', JSON.stringify(perfil));
-    }
+    let whatsappVendedor = "";
+    let carrinho = {};
 
-    function abrirModalCliente() { document.getElementById('modalCliente').style.display = 'flex'; }
-    function fecharModalCliente() { document.getElementById('modalCliente').style.display = 'none'; }
+    function mostrarToast(msg) {
+      const t = document.getElementById('toastMsg');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2500);
+    }
 
     if (!lojaId) {
-      document.getElementById('tituloEmpresa').innerText = 'Loja não informada';
-      document.getElementById('subtituloLocal').innerText = 'Por favor, utilize o link enviado pela empresa.';
-      document.getElementById('vitrineProdutos').innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 30px;">Nenhum catálogo selecionado.</p>';
+      document.getElementById('lojaHeader').innerHTML = "<h1>⚠️ Loja não encontrada</h1><p>Abra o catálogo através do link gerado no seu painel administrativo.</p>";
     } else {
-      db.collection('lojas').doc(lojaId).onSnapshot(doc => {
-        if (doc.exists) {
-          dadosLoja = doc.data();
-          whatsappVendedor = dadosLoja.whatsapp || lojaId;
-          const nomeEmpresa = dadosLoja.nomeEmpresa || 'Catálogo Online';
-          const rua = dadosLoja.rua || '';
-          const cidade = dadosLoja.cidade || '';
-          const estado = dadosLoja.estado || '';
+      carregarDadosLojaCliente(lojaId);
+    }
 
-          document.getElementById('tituloEmpresa').innerText = nomeEmpresa;
-          let localizacaoTexto = '';
-          if (rua) localizacaoTexto += rua;
-          if (cidade) localizacaoTexto += (localizacaoTexto ? ' - ' : '') + cidade;
-          if (estado) localizacaoTexto += '/' + estado;
-          document.getElementById('subtituloLocal').innerText = localizacaoTexto || 'Catálogo & Ordem de Serviço';
+    function carregarDadosLojaCliente(id) {
+      db.collection('lojas').doc(id).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          whatsappVendedor = data.whatsapp || id;
+          
+          document.getElementById('nomeLojaTitulo').innerText = data.nomeEmpresa || 'Minha Loja';
+          document.getElementById('enderecoLojaSub').innerText = `${data.cidade || ''} - ${data.estado || ''} (${data.rua || ''})`;
+          
+          // Aplica a foto de capa no plano de fundo do cabeçalho com segurança
+          if (data.capaUrl && data.capaUrl.trim() !== '') {
+            const headerEl = document.getElementById('lojaHeader');
+            headerEl.style.backgroundImage = `url('${data.capaUrl}')`;
+          }
+        } else {
+          document.getElementById('lojaHeader').innerHTML = "<h1>⚠️ Loja não cadastrada</h1>";
         }
       });
 
-      db.collection('lojas').doc(lojaId).collection('produtos').onSnapshot(snapshot => {
-        produtosLista = [];
+      db.collection('lojas').doc(id).collection('produtos').onSnapshot(snapshot => {
+        let html = '';
         snapshot.forEach(doc => {
+          const pId = doc.id;
           const p = doc.data();
-          // Acrescenta R$ 1,00 no preço exibido para o cliente
-          produtosLista.push({ id: doc.id, ...p, precoClient: (parseFloat(p.preco) || 0) + TAXA_POR_ITEM });
+          const nomeProd = p.nome || 'Produto';
+          const precoProd = Number(p.preco || 0);
+          const descProd = p.descricao || '';
+          const fotoProd = p.fotoUrl || 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500';
+          
+          let qtdAtual = carrinho[pId] ? carrinho[pId].qtd : 0;
+
+          html += `
+            <div class="produto-card" id="card-${pId}">
+              <div>
+                <img src="${fotoProd}" alt="${nomeProd}" onerror="this.src='https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500'">
+                <div class="produto-info" style="margin-top: 6px;">
+                  <h3>${nomeProd}</h3>
+                  <p>${descProd}</p>
+                  <div class="produto-preco">R$ ${precoProd.toFixed(2)}</div>
+                </div>
+              </div>
+              <div class="qtd-controle">
+                <button class="btn-qtd" onclick="alterarQtd('${pId}', '${nomeProd}', ${precoProd}, -1)">-</button>
+                <span class="qtd-numero" id="qtd-${pId}">${qtdAtual}</span>
+                <button class="btn-qtd" onclick="alterarQtd('${pId}', '${nomeProd}', ${precoProd}, 1)">+</button>
+              </div>
+            </div>
+          `;
         });
-        renderizarVitrineLocal();
+        document.getElementById('catalogoProdutos').innerHTML = html || '<p style="color: var(--text-muted); grid-column: 1 / -1; text-align: center;">Nenhum produto cadastrado no momento.</p>';
+        atualizarBarraCarrinho();
       });
     }
 
-    function buscarLocalizacaoGPS() {
-      if (!navigator.geolocation) { alert('Seu navegador não suporta geolocalização.'); return; }
-      const inputRua = document.getElementById('enderecoCliente');
-      const inputNumero = document.getElementById('numeroCliente');
-      inputRua.value = 'Obtendo localização...';
+    function alterarQtd(id, nome, preco, delta) {
+      if (!carrinho[id]) {
+        if (delta > 0) {
+          carrinho[id] = { nome, preco, qtd: delta };
+        }
+      } else {
+        carrinho[id].qtd += delta;
+        if (carrinho[id].qtd <= 0) {
+          delete carrinho[id];
+        }
+      }
 
+      const qtdSpan = document.getElementById(`qtd-${id}`);
+      if (qtdSpan) {
+        qtdSpan.innerText = carrinho[id] ? carrinho[id].qtd : 0;
+      }
+
+      atualizarBarraCarrinho();
+    }
+
+    function atualizarBarraCarrinho() {
+      let totalItens = 0;
+      let valorTotal = 0;
+
+      for (let id in carrinho) {
+        totalItens += carrinho[id].qtd;
+        valorTotal += carrinho[id].preco * carrinho[id].qtd;
+      }
+
+      const barra = document.getElementById('barraCarrinho');
+      if (totalItens > 0) {
+        barra.style.display = 'flex';
+        document.getElementById('carrinhoInfo').innerText = `${totalItens} itens | Total: R$ ${valorTotal.toFixed(2)}`;
+      } else {
+        barra.style.display = 'none';
+      }
+    }
+
+    function abrirModalCadastro() {
+      document.getElementById('modalCadastro').style.display = 'flex';
+    }
+
+    function fecharModalCadastro() {
+      document.getElementById('modalCadastro').style.display = 'none';
+    }
+
+    function verificarPagamentoDinheiro() {
+      const forma = document.getElementById('formaPagamento').value;
+      const blocoTroco = document.getElementById('blocoTroco');
+      if (forma === 'Dinheiro') {
+        blocoTroco.style.display = 'block';
+      } else {
+        blocoTroco.style.display = 'none';
+        document.getElementById('clienteTroco').value = '';
+      }
+    }
+
+    function obterLocalizacaoGPS() {
+      if (!navigator.geolocation) {
+        alert('Seu navegador não suporta geolocalização.');
+        return;
+      }
+      mostrarToast('📍 Obtendo localização GPS...');
       navigator.geolocation.getCurrentPosition(async (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        linkMapaGPS = `https://www.google.com/maps?q=${lat},${lon}`;
+        const linkMaps = `https://www.google.com/maps?q=${lat},${lon}`;
+        
+        document.getElementById('gpsLinkMaps').value = linkMaps;
+        document.getElementById('clienteRua').value = `GPS Coordenadas: (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+
         try {
-          const resposta = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
-          const dados = await resposta.json();
-          if (dados && dados.address) {
-            const rua = dados.address.road || dados.address.suburb || '';
-            const numero = dados.address.house_number || '';
-            const bairro = dados.address.suburb || dados.address.neighbourhood || '';
-            const cidade = dados.address.city || dados.address.town || '';
-            inputRua.value = `${rua} - ${bairro}, ${cidade}`.trim();
-            if (numero) inputNumero.value = numero;
-            salvarDadosClienteLocal();
-          } else {
-            inputRua.value = `Lat: ${lat}, Lon: ${lon}`;
+          const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+          const data = await resp.json();
+          if (data && data.address) {
+            const addr = data.address;
+            document.getElementById('clienteRua').value = `${addr.road || addr.suburb || 'Localização GPS'} ${addr.house_number || ''}`;
+            document.getElementById('clienteBairro').value = addr.suburb || addr.neighbourhood || addr.city_district || '';
+            document.getElementById('clienteCidade').value = addr.city || addr.town || addr.municipality || '';
+            document.getElementById('clienteEstado').value = addr.state || '';
           }
-          alert('📍 Localização obtida com sucesso!');
-        } catch (err) {
-          inputRua.value = `Lat: ${lat}, Lon: ${lon}`;
-          alert('📍 Coordenadas obtidas!');
+        } catch (e) {
+          console.log('Busca automática indisponível.');
         }
-      }, () => { inputRua.value = ''; alert('Erro ao obter GPS.'); }, { enableHighAccuracy: true, timeout: 10000 });
+
+        mostrarToast('✅ Localização obtida com sucesso!');
+      }, (error) => {
+        alert('Erro ao obter GPS. Permita o acesso à localização.');
+      }, { enableHighAccuracy: true });
     }
 
-    function alterarQtd(id, delta) {
-      const prod = produtosLista.find(p => p.id === id);
-      if (!prod) return;
-      if (!carrinho[id]) carrinho[id] = { nome: prod.nome, preco: prod.precoClient, qtd: 0 };
-      carrinho[id].qtd += delta;
-      if (carrinho[id].qtd <= 0) delete carrinho[id];
-      renderizarVitrineLocal();
-    }
+    async function enviarPedidoWhatsApp() {
+      const nome = document.getElementById('clienteNome').value.trim();
+      const cidade = document.getElementById('clienteCidade').value.trim();
+      const rua = document.getElementById('clienteRua').value.trim();
+      const bairro = document.getElementById('clienteBairro').value.trim();
+      const estado = document.getElementById('clienteEstado').value.trim();
+      const formaPagamento = document.getElementById('formaPagamento').value;
+      const troco = document.getElementById('clienteTroco').value.trim();
+      const obs = document.getElementById('clienteObs').value.trim();
+      const gpsLink = document.getElementById('gpsLinkMaps').value.trim();
 
-    function renderizarVitrineLocal() {
-      let html = '';
-      produtosLista.forEach(p => {
-        const qtd = carrinho[p.id] ? carrinho[p.id].qtd : 0;
-        const foto = p.fotoUrl || 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500';
-        html += `
-          <div class="card-prod">
-            <img src="${foto}" alt="${p.nome}" onerror="this.src='https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500'">
-            <div class="card-body">
-              <div>
-                <h4>${p.nome}</h4>
-                <div class="descricao-prod">${p.descricao || ''}</div>
-              </div>
-              <div>
-                <div class="preco">R$ ${p.precoClient.toFixed(2)}</div>
-                <div class="controles">
-                  ${qtd > 0 ? `<button class="btn-qtd btn-minus" onclick="alterarQtd('${p.id}', -1)">-</button>` : '<span></span>'}
-                  <span>${qtd > 0 ? `<b>${qtd}</b>` : ''}</span>
-                  <button class="btn-qtd" onclick="alterarQtd('${p.id}', 1)">+</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-      document.getElementById('vitrineProdutos').innerHTML = html || '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 20px;">Nenhum produto disponível.</p>';
-      atualizarTotal();
-    }
-
-    function atualizarTotal() {
-      let total = 0;
-      let temItens = false;
-      for (let id in carrinho) {
-        total += carrinho[id].preco * carrinho[id].qtd;
-        temItens = true;
-      }
-      document.getElementById('totalGeral').innerText = 'R$ ' + total.toFixed(2);
-      document.getElementById('rodapeCarrinho').style.display = temItens ? 'flex' : 'none';
-    }
-
-    function enviarOrdemServico() {
-      const nome = document.getElementById('nomeCliente').value.trim();
-      const endereco = document.getElementById('enderecoCliente').value.trim();
-      const numero = document.getElementById('numeroCliente').value.trim();
-      const complemento = document.getElementById('complementoCliente').value.trim();
-      const obs = document.getElementById('obsCliente').value.trim();
-
-      if (!nome) return alert('Por favor, informe seu nome!');
-      if (!endereco) return alert('Por favor, informe a rua ou use o GPS!');
-      if (!numero) return alert('Por favor, informe o número da casa!');
-      if (!whatsappVendedor) return alert('Esta empresa não configurou o WhatsApp!');
-
-      salvarDadosClienteLocal();
-
-      let msg = `*📋 ORDEM DE SERVIÇO / PEDIDO*\n`;
-      if (dadosLoja.nomeEmpresa) msg += `*Empresa:* ${dadosLoja.nomeEmpresa}\n`;
-      msg += `*Cliente:* ${nome}\n`;
-      msg += `*Endereço:* ${endereco}, Nº ${numero}${complemento ? ' (' + complemento + ')' : ''}\n`;
-      if (linkMapaGPS) msg += `*📍 Mapa GPS:* ${linkMapaGPS}\n`;
-      if (obs) msg += `*Obs:* ${obs}\n`;
-      msg += `----------------------------------------\n`;
-
-      let total = 0;
-      for (let id in carrinho) {
-        const item = carrinho[id];
-        const subtotal = item.preco * item.qtd;
-        total += subtotal;
-        msg += `• *${item.qtd}x* ${item.nome} (R$ ${item.preco.toFixed(2)} un) = *R$ ${subtotal.toFixed(2)}*\n`;
+      if (!nome || !cidade || !rua || !bairro || !estado) {
+        alert('Por favor, preencha todos os campos obrigatórios!');
+        return;
       }
 
-      msg += `----------------------------------------\n`;
-      msg += `*VALOR TOTAL: R$ ${total.toFixed(2)}*\n`;
-      msg += `----------------------------------------\n`;
-      msg += `Gerado via Catálogo Online.`;
+      if (!whatsappVendedor) {
+        alert('WhatsApp da loja não configurado.');
+        return;
+      }
 
-      fecharModalCliente();
-      window.open(`https://wa.me/${whatsappVendedor}?text=${encodeURIComponent(msg)}`, '_blank');
+      let itensArray = [];
+      let valorTotalGeral = 0;
+      let mensagem = `🛒 *NOVO PEDIDO - CATÁLOGO*\n\n`;
+      mensagem += `👤 *Nome:* ${nome}\n`;
+      mensagem += `🏙️ *Cidade:* ${cidade} - ${estado}\n`;
+      mensagem += `🏠 *Rua:* ${rua}\n`;
+      mensagem += `🏘️ *Bairro:* ${bairro}\n`;
+      if (gpsLink) mensagem += `📍 *GPS / Mapa:* ${gpsLink}\n`;
+      mensagem += `💳 *Forma de Pagamento:* ${formaPagamento}\n`;
+      if (formaPagamento === 'Dinheiro' && troco) {
+        mensagem += `💵 *Troco para:* ${troco}\n`;
+      }
+      if (obs) mensagem += `💬 *Observação:* ${obs}\n\n`;
+      mensagem += `📋 *Itens do Pedido:*\n`;
+
+      for (let id in carrinho) {
+        let item = carrinho[id];
+        let subtotal = item.preco * item.qtd;
+        valorTotalGeral += subtotal;
+        itensArray.push({ nome: item.nome, preco: item.preco, qtd: item.qtd });
+        mensagem += `• ${item.qtd}x ${item.nome} (R$ ${subtotal.toFixed(2)})\n`;
+      }
+
+      mensagem += `\n💰 *Total Geral:* R$ ${valorTotalGeral.toFixed(2)}`;
+
+      if (lojaId) {
+        try {
+          await db.collection('lojas').doc(lojaId).collection('pedidos').add({
+            clienteNome: nome, cidade, rua, bairro, estado, formaPagamento, troco,
+            observacao: obs, gps: gpsLink, itens: itensArray, valorTotal: valorTotalGeral, criadoEm: new Date()
+          });
+        } catch (e) {
+          console.error('Erro ao salvar pedido:', e);
+        }
+      }
+
+      const urlWpp = `https://wa.me/55${whatsappVendedor}?text=${encodeURIComponent(mensagem)}`;
+      window.open(urlWpp, '_blank');
+      fecharModalCadastro();
     }
-
-    carregarDadosClienteListas = carregarDadosClienteLocal();
   </script>
 </body>
 </html>
